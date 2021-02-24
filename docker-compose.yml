@@ -1,0 +1,30 @@
+version: '2'
+services:
+    nginx:
+        image: nginx:1.17-alpine
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./data/nginx/config:/etc/nginx/conf.d
+            - ./www/web:/var/www/web
+            - ./data/nginx/logs:/var/log/nginx
+        links:
+            - php
+    php:
+        build: ./images/php
+        links:
+            - mysql
+        volumes:
+            - ./www:/var/www
+    mysql:
+        image: mysql:5.7.29
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./data/mysql:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: secret
+            MYSQL_PASSWORD: test
+            MYSQL_USER: user
+            MYSQL_DATABASE: test
